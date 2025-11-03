@@ -1,0 +1,35 @@
+{
+  "name": "ai-movie-agent-telex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "mastra dev",
+    "build": "mastra build",
+    "start": "mastra start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shemigam1/ai-movie-agent-telex.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shemigam1/ai-movie-agent-telex/issues"
+  },
+  "homepage": "https://github.com/shemigam1/ai-movie-agent-telex#readme",
+  "dependencies": {
+    "@mastra/evals": "^0.14.2",
+    "@mastra/libsql": "^0.16.1",
+    "@mastra/loggers": "^0.10.18",
+    "@mastra/memory": "^0.15.10",
+    "@types/node": "^24.10.0",
+    "axios": "^1.13.1",
+    "dotenv": "^17.2.3",
+    "mastra": "^0.17.7",
+    "typescript": "^5.9.3",
+    "zod": "^3.25.76"
+  }
+}
