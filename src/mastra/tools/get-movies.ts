@@ -1,5 +1,5 @@
 import { createTool } from "@mastra/core/tools";
-import axios from "axios";
+// import axios from "axios";
 import { z } from "zod";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -146,48 +146,56 @@ async function fetchMoviesFromTMDB(
   const searchUrl = "https://api.themoviedb.org/3/discover/movie";
 
   // Step 1: Search for movies by genre
-  const searchResponse = await axios.get(searchUrl, {
-    params: {
-      with_genres: genreId,
-      sort_by: "popularity.desc",
-      page: 1,
-    },
+  const params = new URLSearchParams({
+    with_genres: genreId,
+    sort_by: "popularity.desc",
+    page: "1",
+  });
+
+  const searchResponse = await fetch(`${searchUrl}?${params}`, {
     headers: {
       Authorization: `Bearer ${apiKey}`,
     },
   });
+  if (!searchResponse.ok) {
+    throw new Error(
+      `TMDB API error: ${searchResponse.status} ${searchResponse.statusText}`
+    );
+  }
 
-  if (
-    !searchResponse.data.results ||
-    searchResponse.data.results.length === 0
-  ) {
+  const searchData = (await searchResponse.json()) as TMDBMovieDetails;
+
+  if (!searchData || !searchData.results || searchData.results.length === 0) {
     throw new Error(`No movies found for genre: ${genreId}`);
   }
 
   // Step 2: Fetch detailed information for each movie
-  const movies = await Promise.all(
-    searchResponse.data.results.slice(0, limit).map(async (movie: any) => {
-      const detailsUrl = `https://api.themoviedb.org/3/movie/${movie.id}`;
-      const detailsResponse = await axios.get(detailsUrl, {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      });
-
-      return {
-        id: detailsResponse.data.id,
-        title: detailsResponse.data.title,
-        overview: detailsResponse.data.overview,
-        rating: detailsResponse.data.vote_average,
-        releaseDate: detailsResponse.data.release_date,
-        runtime: detailsResponse.data.runtime,
-        genres: detailsResponse.data.genres.map(
-          (g: Record<string, unknown>) => g.name
-        ),
-        popularity: detailsResponse.data.popularity,
-      };
-    })
-  );
+  const movies = searchData.results.slice(0, limit).map((movie) => ({
+    id: movie.id,
+    title: movie.title,
+    overview: movie.overview,
+    rating: movie.vote_average,
+    releaseDate: movie.release_date,
+    runtime: movie.runtime || 0,
+    genres: movie.genres.map((g) => g.name),
+    popularity: movie.popularity,
+  }));
 
   return movies;
+}
+
+interface TMDBMovieDetails {
+  results: {
+    id: number;
+    title: string;
+    overview: string;
+    vote_average: number;
+    release_date: string;
+    runtime: number;
+    genres: Array<{
+      id: number;
+      name: string;
+    }>;
+    popularity: number;
+  }[];
 }
