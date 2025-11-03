@@ -8,6 +8,8 @@ import { weatherWorkflow } from "./workflows/weather-workflow";
 //   translationScorer,
 // } from "./scorers/weather-scorer";
 import { movieAgent } from "./agents/movie-agent";
+import { a2aAgentRoute } from "./routes/a2a-route";
+import { telexA2AHandler } from "./routes/telex";
 
 export const mastra = new Mastra({
   // workflows: { weatherWorkflow },
@@ -25,6 +27,9 @@ export const mastra = new Mastra({
     name: "Mastra",
     level: "info",
   }),
+  server: {
+    apiRoutes: [a2aAgentRoute],
+  },
   // telemetry: {
   //   // Telemetry is deprecated and will be removed in the Nov 4th release
   //   enabled: false,
