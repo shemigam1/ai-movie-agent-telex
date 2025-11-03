@@ -51,7 +51,7 @@ export const movieAgent = new Agent({
   
   Use the movie-recommendation tool to fetch suggestions and always format results clearly.`,
 
-  model: "google/gemini-2.5-pro",
+  model: "google/gemini-2.0-flash-001",
   tools: { movieRecommendationTool },
   // scorers: {
   //   toolCallAppropriateness: {

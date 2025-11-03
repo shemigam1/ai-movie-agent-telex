@@ -9,7 +9,7 @@ import { weatherWorkflow } from "./workflows/weather-workflow";
 // } from "./scorers/weather-scorer";
 import { movieAgent } from "./agents/movie-agent";
 import { a2aAgentRoute } from "./routes/a2a-route";
-import { telexA2AHandler } from "./routes/telex";
+// import { telexA2AHandler } from "./routes/telex";
 
 export const mastra = new Mastra({
   // workflows: { weatherWorkflow },
