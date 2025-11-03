@@ -1,31 +1,36 @@
 import { Mastra } from "@mastra/core/mastra";
 import { PinoLogger } from "@mastra/loggers";
 import { LibSQLStore } from "@mastra/libsql";
-
-// import { healthAgent } from "./agents/movie-agent";
-// import { apiTestAgent } from "./agents/api-test-agent";
+import { weatherWorkflow } from "./workflows/weather-workflow";
+// import {
+//   toolCallAppropriatenessScorer,
+//   completenessScorer,
+//   translationScorer,
+// } from "./scorers/weather-scorer";
 import { movieAgent } from "./agents/movie-agent";
-// import { a2aAgentRoute } from "./routes/a2a-agent-route";
-import { a2aAgentRoute } from "./routes/a2a-route";
 
 export const mastra = new Mastra({
-  workflows: {},
-  agents: { movieAgent }, // Only Mastra agents here
-  scorers: {},
+  // workflows: { weatherWorkflow },
+  agents: { movieAgent },
+  // scorers: {
+  //   toolCallAppropriatenessScorer,
+  //   completenessScorer,
+  //   translationScorer,
+  // },
   storage: new LibSQLStore({
+    // stores observability, scores, ... into memory storage, if it needs to persist, change to file:../mastra.db
     url: ":memory:",
   }),
   logger: new PinoLogger({
     name: "Mastra",
     level: "info",
   }),
-  telemetry: {
-    enabled: false,
-  },
+  // telemetry: {
+  //   // Telemetry is deprecated and will be removed in the Nov 4th release
+  //   enabled: false,
+  // },
   observability: {
+    // Enables DefaultExporter and CloudExporter for AI tracing
     default: { enabled: true },
-  },
-  server: {
-    apiRoutes: [a2aAgentRoute],
   },
 });

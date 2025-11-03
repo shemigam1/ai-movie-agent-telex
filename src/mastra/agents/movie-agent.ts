@@ -1,10 +1,12 @@
 import { Agent } from "@mastra/core/agent";
 import { Memory } from "@mastra/memory";
 import { LibSQLStore } from "@mastra/libsql";
+import { weatherTool } from "../tools/weather-tool";
+// import { scorers } from "../scorers/weather-scorer";
 import { movieRecommendationTool } from "../tools/get-movies";
 
 export const movieAgent = new Agent({
-  name: "movieAgent",
+  name: "wasiu_the_cinephile",
   instructions: `You are the Movie Recommendation Specialist for CinemaMatch.
   
   Your job is to help users find perfect movies based on their current mood.
@@ -49,59 +51,34 @@ export const movieAgent = new Agent({
   
   Use the movie-recommendation tool to fetch suggestions and always format results clearly.`,
 
-  model: "google/gemini-2.0-flash",
-  tools: { movieRecommendation: movieRecommendationTool },
+  model: "google/gemini-2.5-pro",
+  tools: { movieRecommendationTool },
+  // scorers: {
+  //   toolCallAppropriateness: {
+  //     // scorer: scorers.toolCallAppropriatenessScorer,
+  //     sampling: {
+  //       type: "ratio",
+  //       rate: 1,
+  //     },
+  //   },
+  // completeness: {
+  //   scorer: scorers.completenessScorer,
+  //   sampling: {
+  //     type: "ratio",
+  //     rate: 1,
+  //   },
+  // },
+  // translation: {
+  //   scorer: scorers.translationScorer,
+  //   sampling: {
+  //     type: "ratio",
+  //     rate: 1,
+  //   },
+  // },
+  // },
   memory: new Memory({
-    storage: new LibSQLStore({ url: "file:../mastra.db" }),
+    storage: new LibSQLStore({
+      url: "file:../mastra.db", // path is relative to the .mastra/output directory
+    }),
   }),
 });
-
-export interface MovieRecommendationResult {
-  recommendations: Array<{
-    title: string;
-    year?: number;
-    genres?: string[];
-    runtimeMinutes?: number;
-    reason?: string;
-  }>;
-  source?: string;
-  // add fields you actually use...
-}
-
-// Helper function for mood-based recommendations
-// export async function runMovieRecommendation(config: {
-//   mood: string;
-//   preferences?: {
-//     genres?: string[];
-//     releaseType?: "recent" | "classic" | "any";
-//     runtimeRange?: [number, number];
-//     contentWarnings?: string[];
-//   };
-//   limit?: number;
-// }): Promise<MovieRecommendationResult> {
-//   console.log(`\n[MovieAgent] 🎬 Finding movies for mood: "${config.mood}"`);
-
-//   try {
-//     const prompt = `Recommend movies for someone feeling ${config.mood}.
-// ${config.preferences?.genres ? `Preferred genres: ${config.preferences.genres.join(", ")}` : ""}
-// ${config.preferences?.releaseType ? `Release preference: ${config.preferences.releaseType}` : ""}
-// ${config.preferences?.runtimeRange ? `Runtime: ${config.preferences.runtimeRange[0]}-${config.preferences.runtimeRange[1]} minutes` : ""}
-// ${config.preferences?.contentWarnings ? `Avoid: ${config.preferences.contentWarnings.join(", ")}` : ""}
-// ${config.limit ? `Return ${config.limit} recommendations` : "Return up to 5 recommendations"}`;
-
-//     const result = await movieAgent.generate(prompt, {
-//       onStepFinish: (step) => {
-//         if (step.toolCalls && step.toolCalls.length > 0) {
-//           console.log(
-//             `[MovieAgent] 🔍 Fetching personalized recommendations...`
-//           );
-//         }
-//       },
-//     });
-
-//     return result as MovieRecommendationResult;
-//   } catch (error: any) {
-//     console.error(`[MovieAgent] ❌ Error: ${error.message}`);
-//     throw error;
-//   }
-// }
